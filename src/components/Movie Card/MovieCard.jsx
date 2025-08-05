@@ -2,7 +2,14 @@ import React from "react";
 import { BiHeart } from "react-icons/bi";
 import { Link } from "react-router";
 
-function MovieCard({ vote_average, poster_path, title, release_date, id }) {
+function MovieCard({
+  vote_average,
+  poster_path,
+  title,
+  release_date,
+  id,
+  isTV,
+}) {
   const vote = Math.round(vote_average * 10);
 
   let borderColor = "border-red-500";
@@ -11,10 +18,10 @@ function MovieCard({ vote_average, poster_path, title, release_date, id }) {
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden relative group">
-      <Link to={`/movie/${id}`}>
+      <Link to={`/${isTV ? "tv" : "movie"}/${id}`}>
         <img
           src={`https://image.tmdb.org/t/p/w500${poster_path}`}
-          alt="The Good Doctor"
+          alt={title}
           className="h-60 w-full object-cover"
         />
       </Link>
