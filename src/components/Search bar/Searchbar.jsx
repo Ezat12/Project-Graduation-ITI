@@ -1,19 +1,17 @@
 import { useState } from "react";
 
-const SearchBar = () => {
+const SearchBar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
+    onSearch(searchQuery);
   };
 
   return (
     <div className="bg-gray-100 m-5 p-10 ">
       <div className="mx-auto">
-        <h1 className="text-4xl font-bold mb-6">
-          Welcome to our movie app
-        </h1>
+        <h1 className="text-4xl font-bold mb-6">Welcome to our movie app</h1>
         <p className="text-sm mb-10 opacity-90">
           Millions of movies, TV shows and people to discover. Explore now.
         </p>
