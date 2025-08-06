@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BiHeart, BiArrowBack } from "react-icons/bi";
+import MovieCard from "../components/Movie Card/MovieCard";
 
 function Details() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState([]);
 
   const isTV = window.location.pathname.includes("/tv/");
 
@@ -15,13 +17,18 @@ function Details() {
     const fetchDetails = async () => {
       try {
         const API_KEY = "1d88e762a21c6b2c8d482aa18255b905";
+
         const response = await axios.get(
-          `https://api.themoviedb.org/3/${
-            isTV ? "tv" : "movie"
-          }/${id}?api_key=${API_KEY}`
+          `https://api.themoviedb.org/3/${isTV ? "tv" : "movie"}/${id}?api_key=${API_KEY}`
         );
-        console.log("API Response:", response.data);
         setMovie(response.data);
+
+        if (!isTV) {
+          const recResponse = await axios.get(
+            `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${API_KEY}`
+          );
+          setRecommendations(recResponse.data.results.slice(0, 6));
+        }
       } catch (error) {
         console.error("Error fetching movie details:", error);
       } finally {
@@ -31,6 +38,10 @@ function Details() {
 
     fetchDetails();
   }, [id, isTV]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   if (loading) {
     return (
@@ -161,6 +172,24 @@ function Details() {
               </div>
             </div>
           </div>
+
+          {!isTV && recommendations.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-2xl font-semibold mb-4 text-white">Recommended Movies</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                {recommendations.map((rec) => (
+                  <MovieCard
+                    key={rec.id}
+                    vote_average={rec.vote_average}
+                    poster_path={rec.poster_path}
+                    title={rec.title}
+                    release_date={rec.release_date}
+                    id={rec.id}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
